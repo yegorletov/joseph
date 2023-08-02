@@ -1,0 +1,101 @@
+# Account login and logout
+* login endpoint
+	url:	/account/login
+	method: post
+	argument:	api_key(string), login(integer), password(string)
+	response: 	auth_token(string), status_code(200) if success
+			err_msg(string), status_code(400, 403, 404, ..) if fail
+
+* logout endpoint
+	url:	/account/logout
+	method: post
+	argument:	api_key(string), login(integer)
+	response: 	status_code(200) if success
+			err_msg(string), status_code(400, 403, 404, ..) if fail
+
+# Trade requests
+* new order
+	url:	/trade/order/new
+	method: post
+	argument:	api_key(string), auth_token(string), order(Object)
+	response: 	position(Object) if success with status_code 200
+			err_msg(string) if fail, status_code(400, 403, 404, ..)
+	** `argument` example
+		{
+			api_key: '3Erg45DF76f3', // api_key provided by the trade server
+			auth_token: 'XXXXXXXXXXXX',
+			order: {...}
+		}
+
+	** `order` Object
+		items:	order_id(integer), order_type(integer), symbol(string), volume(integer), price(float), stop_limit_price(float), take_profit(float), stop_loss(float), expired_time(timestamp), expired_type(integer)
+		ex: {
+			order_id: 0, // in case of create new order
+			order_type: 0, // 0 for buy, 1 for sell
+			symbol: "EURUSD",
+			volume: 1000,
+			price: 1.23456,
+			stop_limit_price: 1.34567,	// optional 
+			take_profit: 1.11111,		// optional
+			stop_loss: 1.33333,		// optional
+			expird_type: 2,			// optional
+			expird_time: 17899876		// optional, but specified when expird_type is 2
+			}
+	** `position` Object
+		items: position_id(integer), symobol(string), time(timestamp), type(integer), volume(integer), price(float), stop_limit_price(float), take_profit(float), stop_loss(float), contract_size(integer), profit_rate(float), margin_rate(float), profit(float)
+
+		ex: {
+			position_id: 99999,
+			symbol: "EURUSD",
+			time: 1690167591
+			type: 0				// 0 for buy, 1 for sell
+			volume: 1000,
+			open_price: 1.23456,
+			stop_limit_price: 1.34567,	// optional 
+			take_profit: 1.11111,		// optional
+			stop_loss: 1.33333,		// optional
+			contract_size: 10000,
+			profit_rate: 1.0,
+			margin_rate: 1.0,
+			close_price: 1.44156		// optional if closed position
+			profit: 2.06,			// optional if closed position
+			}
+
+* modify order
+	url:	/trade/order/modify
+	method: post
+	argument:	api_key(string), auth_token(string), order(Object)
+	response: 	order(Object) if success wih status_code(200)
+			err_msg(string), status_code(400, 403, 404, ..) if fail
+* delete order
+	url:	/trade/order/delete
+	method: post
+	argument:	api_key(string), auth_token(string), order_id(integer)
+	response: 	order_id(integer) if success wih status_code(200)
+			err_msg(string), status_code(400, 403, 404, ..) if fail
+* modify position
+	url:	/trade/position/modify
+	method: post
+	argument:	api_key(string), auth_token(string), position(Object)
+	response: 	position(Object) if success wih status_code(200)
+			err_msg(string), status_code(400, 403, 404, ..) if fail
+* close position
+	url:	/trade/position/delete
+	method: post
+	argument:	api_key(string), auth_token(string), position_id(integer)
+	response: 	position_id(integer) if success wih status_code(200)
+			err_msg(string), status_code(400, 403, 404, ..) if fail
+
+# Trade history
+* order list
+	url:	/trade/history/orders
+	method: post
+	argument:	api_key(string), auth_token(string)
+	response: 	orders(list(Object)) if success wih status_code(200)
+			err_msg(string), status_code(400, 403, 404, ..) if fail
+* position list
+	url:	/trade/history/positions
+	method: post
+	argument:	api_key(string), auth_token(string)
+	response: 	positions(list(Object)) if success wih status_code(200)
+			err_msg(string), status_code(400, 403, 404, ..) if fail
